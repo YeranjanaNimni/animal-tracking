@@ -1,18 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />  
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.5/socket.io.js"></script>
-  </head>
-  <body>
-    check console logs sexy :f
-  </body>
-  <script>
-      var socket = io.connect('/');
-      socket.on('arduino-data', (data) => {
-        console.log('arduino data: ', data);
-      });
-  </script>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.5/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+</head>
+
+<body>
+  <canvas id="chartJSContainer" width="600" height="250"></canvas>
+</body>
+<script>
+
+  var xCoordinatesArry = [];
+  var yCoordinatesArry = [];
+ var abc = [];
+  var socket = io.connect('/');
+  socket.on('arduino-data', (data) => {
+    console.log('arduino data: ', data);
+    console.log('x coordinates : ', data.x);
+    console.log('y coordinates : ', data.y);
+    var xCoordinate = data.x;
+    //var yCoordinate = data.y;
+    xCoordinatesArry.push(xCoordinate);
+  abc.push(data.y);
+//abc.push(data.x)
+    console.log("this is X array",xCoordinatesArry);
+    console.log("this is Y array",abc);
+    
+  });
+
+  var options = {
+    type: 'line',
+    data: {
+      labels: [...xCoordinatesArry],
+      datasets: [
+        {
+          label: '# of Votes',
+          data: abc,
+          borderWidth: 1
+        }
+      ]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            reverse: false
+          }
+        }]
+      }
+    }
+  }
+
+  var ctx = document.getElementById('chartJSContainer').getContext('2d');
+  new Chart(ctx, options);
+</script>
+
 </html>
